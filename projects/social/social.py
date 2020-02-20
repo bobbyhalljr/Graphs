@@ -105,41 +105,39 @@ class SocialGraph:
         # create an empty queue
         q = Queue()
         # add a path to the user_id
-        q.enqueue( [user_id] ) 
+        q.enqueue(user_id) 
         # create an empty dict
         visited = {}  # Note that this is a dictionary, not a set
         # while the queue is not empty 
-        counter = 0
+        # counter = 0
         while q.size() > 0:
-            counter += 1
-            print(counter)
+            # counter += 1
+            # print(counter)
             # dequeue the first path
-            path = q.dequeue()
+            v = q.dequeue()
             # grab the last friend key / value from the path
-            v = path[-1]
+            # v = path[- 1]
             # check if it's the target
-            if v == user_id:
+            # if v == user_id:
                 # if so return the path
-                return path
+                # return path
             # check if its been visited
             # if it has not been visited...
             if v not in visited:
                 # mark it as visited
-                visited.add(v)
+                visited['user_id'] = v
                 # then add a path to all the neighbors to the back of the queue
                 for neighbor in self.get_neighbors(v):
-                    # make a copy of the path before adding
-                    path_copy = path.copy()
-                    path_copy.append(neighbor)
-                    q.enqueue(path_copy)
+                    q.enqueue(neighbor)
         
         # !!!! IMPLEMENT ME
-        return visited
+        return visited.values()
 
 
 if __name__ == '__main__':
     sg = SocialGraph()
     sg.populate_graph(10, 2)
-    print(sg.friendships)
-    connections = sg.get_all_social_paths(2)
-    print(connections)
+    print(sg.friendships, 'this is friendships')
+    print('--------')
+    connections = sg.get_all_social_paths(1)
+    print(connections, 'this is the number of connections')
