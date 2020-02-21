@@ -72,33 +72,26 @@ player = Player(world.starting_room)
 traversal_path = []
 visited = []
 paths = ['n', 's', 'e', 'w']
-# paths = ['n', 's', 'e', 'w']
-
-# room = Room()
 
 def explore_all(starting_point):
     s = Stack()
     s.push(starting_point)
-    if s.size() > 0:
+    while s.size() > 0:
         v = s.pop()
         if v not in visited:
             visited.append(v)
             for path in world.rooms:
-                # traversal_path.append(paths[0])
-                # visited.append(starting_point)
+                print(path)
                 traversal_path.append(random.choice(paths))
-                # if room.get_exits() == None:
-                #     s.pop()
-                if world.rooms.values() != '?':
-                    s.push((random.choice(paths)))
+                if player.current_room not in visited:
+                    s.push(path)
     
     return traversal_path
 
-explore_all('e')
+explore_all('n')
 print(traversal_path)
-# print(world.rooms.keys())
         
-        
+# ******************* THE PLAN **********************
 
 # use DST to pick a unvisted direction from players room
 # for path in traval_path
