@@ -45,11 +45,11 @@ world = World()
 
 
 # You may uncomment the smaller graphs for development and testing purposes.
-map_file = "maps/test_line.txt"
+# map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
-# map_file = "maps/main_maze.txt"
+map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -72,26 +72,21 @@ player = Player(world.starting_room)
 traversal_path = []
 visited = []
 paths = ['n', 's', 'e', 'w']
+# paths = ['n', 's', 'e', 'w']
 
 def explore_all(starting_point):
     s = Stack()
     s.push(starting_point)
-    for path in world.rooms:
-        player.travel(paths[0])
-        print(paths[0])
-        visited.append(starting_point)
-        # for i in range(s.size()):
-        #     if visited[i] not in traversal_path:
-        #         traversal_path.append(i)
-        #     else:
-        #         s.pop()
-                
-        if s.size() > 0:
-            player.travel(random.choice(paths))
-        else: 
-            traversal_path.append(path)
-            print(traversal_path)
-            
+    if s.size() > 0:
+        v = s.pop()
+        if v not in visited:
+            visited.append(v)
+            for path in world.rooms:
+                # traversal_path.append(paths[0])
+                # visited.append(starting_point)
+                traversal_path.append(random.choice(paths))
+                if world.rooms.values() == '?':
+                    traversal_path.append()
     # return traversal_path
 
 explore_all('n')
@@ -113,7 +108,7 @@ explore_all('n')
 #  if exit is in visted
     # add exit to the queue  
 
-# convert list of rooms to a list of n/s/e/w
+# convert dict of rooms to a list of n/s/e/w
 # add to traversal_list
 # if all paths explored, done
 
