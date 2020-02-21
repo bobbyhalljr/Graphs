@@ -74,6 +74,8 @@ visited = []
 paths = ['n', 's', 'e', 'w']
 # paths = ['n', 's', 'e', 'w']
 
+# room = Room()
+
 def explore_all(starting_point):
     s = Stack()
     s.push(starting_point)
@@ -85,12 +87,15 @@ def explore_all(starting_point):
                 # traversal_path.append(paths[0])
                 # visited.append(starting_point)
                 traversal_path.append(random.choice(paths))
-                if world.rooms.values() == '?':
-                    traversal_path.append()
-    # return traversal_path
+                # if room.get_exits() == None:
+                #     s.pop()
+                if world.rooms.values() != '?':
+                    s.push((random.choice(paths)))
+    
+    return traversal_path
 
-explore_all('n')
-# print(traversal_path)
+explore_all('e')
+print(traversal_path)
 # print(world.rooms.keys())
         
         
@@ -114,43 +119,6 @@ explore_all('n')
 
 
 # -------------------------------------
-
-# traversal_path = []
-
-
-
-
-# class Graph:
-#     def __int__(self):
-#         self.exit = {}
-        
-#     def get_neighbors(self, exits):
-#         return self.exit(exits)
-    
-#     def dft(self, starting_dir):
-#         s = Stack()
-#         # pick an unexplored direction from the player's current room
-#         s.push(starting_dir)
-#         visited = set()
-#         while s.size() > 0:
-#             v = s.pop()
-#             if v not in visited:
-#                 print(v)
-#                 visited.add(v)
-#                 for neighbor in self.get_neighbors(v):
-#                     s.push(neighbor)
-
-# travel and log that direction
-# traversal_path.append(paths[0])
-# # path = traversal_path[paths[0]]
-# # print(path)
-# # then loop
-# for path in traversal_path:
-#     # When you reach a dead-end
-#     if world.rooms == '?':
-#         # walk back to the nearest room that does contain an unexplored path
-#         traversal_path.pop()
-
         
 # TRAVERSAL TEST
 visited_rooms = set()
