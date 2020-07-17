@@ -43,7 +43,6 @@ class Stack():
 # Load world
 world = World()
 
-
 # You may uncomment the smaller graphs for development and testing purposes.
 # map_file = "maps/test_line.txt"
 # map_file = "maps/test_cross.txt"
@@ -69,28 +68,6 @@ player = Player(world.starting_room)
 # rooms are the Edges
 # (0 - 500)
 
-traversal_path = []
-visited = []
-paths = ['n', 's', 'e', 'w']
-
-def explore_all(starting_point):
-    s = Stack()
-    s.push(starting_point)
-    while s.size() > 0:
-        v = s.pop()
-        if v not in visited:
-            visited.append(v)
-            for path in world.rooms:
-                print(path)
-                traversal_path.append(random.choice(paths))
-                if player.current_room not in visited:
-                    s.push(path)
-    
-    return traversal_path
-
-explore_all('n')
-print(traversal_path)
-        
 # ******************* THE PLAN **********************
 
 # use DST to pick a unvisted direction from players room
@@ -109,6 +86,58 @@ print(traversal_path)
 # convert dict of rooms to a list of n/s/e/w
 # add to traversal_list
 # if all paths explored, done
+
+
+# *********** trying for faster solution *********************
+
+traversal_path = []
+# visited = []
+paths = ['n', 's', 'e', 'w']
+
+def explore_paths(starting_point):
+    visited = {}
+    
+    q = Queue()
+    q.enqueue(visited[starting_point])
+    
+    while q.size() > 0:
+        current_path = q.dequeue()
+        current_path = current_path[-1]
+        if current_path not in visited:
+            visited[current_path] = current_path
+            
+    
+    return traversal_path
+
+
+explore_paths('n')
+print(traversal_path)
+
+
+# ************** brute force solution *******************
+
+# traversal_path = []
+# visited = []
+# paths = ['n', 's', 'e', 'w']
+
+# def explore_all(starting_point):
+#     s = Stack()
+#     s.push(starting_point)
+#     while s.size() > 0:
+#         v = s.pop()
+#         if v not in visited:
+#             visited.append(v)
+#             for path in world.rooms:
+#                 print(path)
+#                 traversal_path.append(random.choice(paths))
+#                 if player.current_room not in visited:
+#                     s.push(path)
+    
+#     return traversal_path
+
+# explore_all('n')
+# print(traversal_path)
+        
 
 
 # -------------------------------------
