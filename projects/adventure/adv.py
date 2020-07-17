@@ -69,15 +69,16 @@ opposite_Directions = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
 # get exits in first room
 rooms[0] = player.current_room.get_exits()
 
-# while length of rooms is less than graph
+# while length of rooms is less than length of graph
 while len(rooms) < len(room_graph) - 1:
-    print("rooms: ", rooms, "\n\n", " room_graph: ", room_graph, "\n\n")
+    # print("rooms: ", rooms, "\n\n", " room_graph: ", room_graph, "\n\n")
     # if current room.id not in rooms
     if player.current_room.id not in rooms:
         # get exits of room
         rooms[player.current_room.id] = player.current_room.get_exits()
         # get last item in list
         lastRoom = reversed_path[-1]
+        # removed last room from dict
         rooms[player.current_room.id].remove(lastRoom)
 
     # while room is empty
