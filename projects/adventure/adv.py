@@ -7,7 +7,6 @@ from queue import SimpleQueue
 import random
 from ast import literal_eval
 
-# ************************ start of code *********************************
 
 # Load world
 world = World()
@@ -56,32 +55,47 @@ player = Player(world.starting_room)
 # add to traversal_list
 # if all paths explored, done
 
+# ************************ start of code *********************************
 
 # *********** trying for faster solution *********************
 
 traversal_path = []
 reversed_path = []
 rooms = {}
+
+# for backtracking
 opposite_Directions = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
 
+# get exits in first room
 rooms[0] = player.current_room.get_exits()
 
+# while length of rooms is less than graph
 while len(rooms) < len(room_graph) - 1:
     print("rooms: ", rooms, "\n\n", " room_graph: ", room_graph, "\n\n")
+    # if current room.id not in rooms
     if player.current_room.id not in rooms:
+        # get exits of room
         rooms[player.current_room.id] = player.current_room.get_exits()
+        # get last item in list
         lastRoom = reversed_path[-1]
         rooms[player.current_room.id].remove(lastRoom)
 
     # while room is empty
     while len(rooms[player.current_room.id]) < 1:
+        # pop off room from reverse list
         reverse = reversed_path.pop()
+        # add to traversal list
         traversal_path.append(reverse)
+        # travel through list
         player.travel(reverse)
 
+    # get exits of room
     exit_dir = rooms[player.current_room.id].pop(0)
+    # add exit to traversal_path
     traversal_path.append(exit_dir)
+    # backtrack in opposite direction
     reversed_path.append(opposite_Directions[exit_dir])
+    # travel in that direction
     player.travel(exit_dir)
     
 
