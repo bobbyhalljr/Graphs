@@ -1,44 +1,13 @@
 from room import Room
 from player import Player
 from world import World
+from graph import Graph
 
+from queue import SimpleQueue
 import random
 from ast import literal_eval
 
-
-# Note: This Queue class is sub-optimal. Why?
-class Queue():
-    def __init__(self):
-        self.queue = []
-    def enqueue(self, value):
-        self.queue.append(value)
-    def dequeue(self):
-        if self.size() > 0:
-            return self.queue.pop(0)
-        else:
-            return None
-    def size(self):
-        return len(self.queue)
-
-class Stack():
-    def __init__(self):
-        self.stack = []
-    def push(self, value):
-        self.stack.append(value)
-    def pop(self):
-        if self.size() > 0:
-            return self.stack.pop()
-        else:
-            return None
-    def size(self):
-        return len(self.stack)
-    
-# def get_neighbors(exit):
-#     """
-#     Get all neighbors (edges) of a vertex.
-#     """
-#     p = {}
-#     return p['exit']
+# ************************ start of code *********************************
 
 # Load world
 world = World()
@@ -51,7 +20,7 @@ world = World()
 map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
-room_graph=literal_eval(open(map_file, "r").read())
+room_graph = literal_eval(open(map_file, "r").read())
 world.load_graph(room_graph)
 
 # Print an ASCII map
@@ -91,27 +60,106 @@ player = Player(world.starting_room)
 # *********** trying for faster solution *********************
 
 traversal_path = []
-# visited = []
-paths = ['n', 's', 'e', 'w']
+reversed_path = []
+rooms = {}
+opposite_Directions = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
 
-def explore_paths(starting_point):
-    visited = {}
-    
-    q = Queue()
-    q.enqueue(visited[starting_point])
-    
-    while q.size() > 0:
-        current_path = q.dequeue()
-        current_path = current_path[-1]
-        if current_path not in visited:
-            visited[current_path] = current_path
-            
-    
-    return traversal_path
+rooms[0] = player.current_room.get_exits()
 
+while len(rooms) < len(room_graph) - 1:
+    print("rooms: ", rooms, "\n\n", " room_graph: ", room_graph, "\n\n")
+    if player.current_room.id not in rooms:
+        rooms[player.current_room.id] = player.current_room.get_exits()
+        lastRoom = reversed_path[-1]
+        rooms[player.current_room.id].remove(lastRoom)
 
-explore_paths('n')
-print(traversal_path)
+    # while room is empty
+    while len(rooms[player.current_room.id]) < 1:
+        reverse = reversed_path.pop()
+        traversal_path.append(reverse)
+        player.travel(reverse)
+
+    exit_dir = rooms[player.current_room.id].pop(0)
+    traversal_path.append(exit_dir)
+    reversed_path.append(opposite_Directions[exit_dir])
+    player.travel(exit_dir)
+    
+    
+    '''
+rooms:  {0: ['n', 's', 'w', 'e']} 
+  room_graph:  {
+   0: [(3, 5), {'n': 1, 's': 5, 'e': 3, 'w': 7}],
+   1: [(3, 6), {'s': 0, 'n': 2}],
+   2: [(3, 7), {'s': 1}],
+   3: [(4, 5), {'w': 0, 'e': 4}],
+   4: [(5, 5), {'w': 3}],
+   5: [(3, 4), {'n': 0, 's': 6}], 
+   6: [(3, 3), {'n': 5}],
+   7: [(2, 5), {'w': 8, 'e': 0}], 
+   8: [(1, 5), {'e': 7}]} 
+rooms:  {0: ['s', 'w', 'e']} 
+  room_graph:  {
+   0: [(3, 5), {'n': 1, 's': 5, 'e': 3, 'w': 7}],
+   1: [(3, 6), {'s': 0, 'n': 2}],
+   2: [(3, 7), {'s': 1}],
+   3: [(4, 5), {'w': 0, 'e': 4}],
+   4: [(5, 5), {'w': 3}],
+   5: [(3, 4), {'n': 0, 's': 6}], 
+   6: [(3, 3), {'n': 5}], 
+   7: [(2, 5), {'w': 8, 'e': 0}], 
+   8: [(1, 5), {'e': 7}]} 
+rooms:  {0: ['s', 'w', 'e'], 1: []} 
+  room_graph:  {0: [(3, 5), {'n': 1, 's': 5, 'e': 3, 'w': 7}],
+   1: [(3, 6), {'s': 0, 'n': 2}],
+   2: [(3, 7), {'s':    1
+   ], 3: [(4, 5)   , {'w': 0, 'e': 4}],
+   4: [(5, 5), {'w':
+    3}], 5: [(3, 4), {'n': 0, 's': 6}], 
+   6: [(3, 3), {
+       'n': 5}], 7: [(2, 5), {'w': 8, 'e': 0}], 
+   8: [(1, 5), {'e': 7}]} 
+rooms:  {0: ['w', 'e'], 1: [], 2: []} 
+  room_graph:  {
+   0: [(3, 5), {'n': 1, 's': 5, 'e': 3, 'w': 7}],
+   1: [(3, 6), {'s': 0, 'n': 2}],
+   2: [(3, 7), {'s': 1}], 3: [(4, 5), {'w': 0, 'e': 4}],
+   4: [(5, 5), {'w': 3}], 5: [(3, 4), {'n': 0, 's': 6}], 
+   6: [(3, 3), {'n': 5}], 7: [(2, 5), {'w': 8, 'e': 0}], 
+   8: [(1, 5), {'e': 7}]} 
+rooms:  {0: ['w', 'e'], 1: [], 2: [], 5: []} 
+  room_graph:  {
+   0: [(3, 5), {'n': 1, 's': 5, 'e': 3, 'w': 7}],
+   1: [(3, 6), {'s': 0, 'n': 2}],
+   2: [(3, 7), {'s': 1}], 3: [(4, 5), {'w': 0, 'e': 4}],
+   4: [(5, 5), {'w': 3}], 5: [(3, 4), {'n': 0, 's': 6}], 
+   6: [(3, 3), {'n': 5}], 7: [(2, 5), {'w': 8, 'e': 0}], 
+   8: [(1, 5), {'e': 7}]} 
+rooms:  {0: ['e'], 1: [], 2: [], 5: [], 6: []} 
+  room_graph:  {
+   0: [(3, 5), {'n': 1, 's': 5, 'e': 3, 'w': 7}],
+   1: [(3, 6), {'s': 0, 'n': 2}],
+   2: [(3, 7), {'s': 1}], 3: [(4, 5), {'w': 0, 'e': 4}],
+   4: [(5, 5), {'w': 3}], 5: [(3, 4), {'n': 0, 's': 6}], 
+   6: [(3, 3), {'n': 5}], 7: [(2, 5), {'w': 8, 'e': 0}], 
+   8: [(1, 5), {'e': 7}]} 
+rooms:  {0: ['e'], 1: [], 2: [], 5: [], 6: [], 7: []} 
+  room_graph:  {
+   0: [(3, 5), {'n': 1, 's': 5, 'e': 3, 'w': 7}],
+   1: [(3, 6), {'s': 0, 'n': 2}],
+   2: [(3, 7), {'s': 1}], 3: [(4, 5), {'w': 0, 'e': 4}],
+   4: [(5, 5), {'w': 3}], 5: [(3, 4), {'n': 0, 's': 6}], 
+   6: [(3, 3), {'n': 5}], 7: [(2, 5), {'w': 8, 'e': 0}], 
+   8: [(1, 5), {'e': 7}]} 
+rooms:  {0: [], 1: [], 2: [], 5: [], 6: [], 7: [], 8: []} 
+  room_graph:  {
+   0: [(3, 5), {'n': 1, 's': 5, 'e': 3, 'w': 7}],
+   1: [(3, 6), {'s': 0, 'n': 2}],
+   2: [(3, 7), {'s': 1}], 3: [(4, 5), {'w': 0, 'e': 4}],
+   4: [(5, 5), {'w': 3}], 5: [(3, 4), {'n': 0, 's': 6}], 
+   6: [(3, 3), {'n': 5}], 7: [(2, 5), {'w': 8, 'e': 0}], 
+   8: [(1, 5), {'e': 7}]} 
+'''
+
 
 
 # ************** brute force solution *******************
